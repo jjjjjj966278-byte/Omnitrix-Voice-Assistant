@@ -3,6 +3,7 @@ import webbrowser
 import os
 import time
 
+# Voice assistant Omnitrix ready!
 def speak(text):
     print(f"🗣️ Omnitrix: {text}")
 
