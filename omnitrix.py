@@ -1,44 +1,29 @@
+import kivy
+from kivy.app import App
+from kivy.uix.button import Button
 import speech_recognition as sr
-import webbrowser
-import os
-import time
+import pyttsx3
 
-# Voice assistant Omnitrix ready!
-def speak(text):
-    print(f"🗣️ Omnitrix: {text}")
+class VoiceApp(App):
+    def speak(self, text):
+        engine = pyttsx3.init()
+        engine.say(text)
+        engine.runAndWait()
 
-def listen_command():
-    r = sr.Recognizer()
-    with sr.Microphone() as source:
-        speak("Listening...")
-        audio = r.listen(source)
-    try:
-        command = r.recognize_google(audio)
-        return command.lower()
-    except sr.UnknownValueError:
-        speak("Sorry, I couldn't understand.")
-        return ""
-    except sr.RequestError:
-        speak("Network issue.")
-        return ""
+    def listen(self, instance):
+        recognizer = sr.Recognizer()
+        with sr.Microphone() as source:
+            print("Listening...")
+            audio = recognizer.listen(source)
+        try:
+            text = recognizer.recognize_google(audio)
+            print("You said:", text)
+            self.speak("You said " + text)
+        except:
+            self.speak("Sorry, I did not understand.")
 
-def process_command(cmd):
-    if "play song" in cmd:
-        speak("Opening YouTube for song...")
-        webbrowser.open("https://www.youtube.com/results?search_query=pal+pal+del+ke+pass")
-    elif "open youtube" in cmd:
-        speak("Opening YouTube...")
-        webbrowser.open("https://youtube.com")
-    elif "open google" in cmd:
-        speak("Opening Google...")
-        webbrowser.open("https://google.com")
-    elif "photo" in cmd:
-        speak("Opening gallery...")
-        os.system("am start -a android.intent.action.VIEW -d file:///sdcard/DCIM/Camera")
-    elif "flashlight on" in cmd:
-        os.system("termux-torch on")
-        speak("Flashlight turned on")
-    elif "flashlight off" in cmd:
-        os.system("termux-torch off")
-        speak("Flashlight turned off")
-    elif "exit" in
+    def build(self):
+        return Button(text="Tap to Speak", on_press=self.listen)
+
+if __name__ == "__main__":
+    VoiceApp().run()
